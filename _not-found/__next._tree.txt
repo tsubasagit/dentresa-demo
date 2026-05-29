@@ -1,0 +1,3 @@
+:HL["/dentresa-demo/_next/static/chunks/09boug5i5fvqh.css","style"]
+:HL["/dentresa-demo/_next/static/chunks/08o298~.2u2ye.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"6zogv72bMfh0cd1aa-Hdh"}
