@@ -1,4 +1,4 @@
 :HL["/dentresa-demo/_next/static/chunks/09boug5i5fvqh.css","style"]
-:HL["/dentresa-demo/_next/static/chunks/0k~gy-gqw5f3z.css","style"]
+:HL["/dentresa-demo/_next/static/chunks/0.1tai2-b_nkx.css","style"]
 :HL["/dentresa-demo/_next/static/media/ad9c66e761fed85a-s.p.0e4b2z5rxsmxh.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"reservations","param":null,"prefetchHints":0,"slots":{"children":{"name":"new","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"5xq6DP-25ey5vX8XL4Mvg"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"reservations","param":null,"prefetchHints":0,"slots":{"children":{"name":"new","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"RUORJKSoIIwlK24NJ506O"}
