@@ -10,4 +10,4 @@
 - https://tsubasagit.github.io/dentresa-demo/reservations/new/
 - デモ用ID例：00231 / 00489 / 00512
 
-トップ: https://tsubasagit.github.io/dentresa-demo/ ／ LP: https://tsubasagit.github.io/dentresa-lp/
+トップ: https://tsubasagit.github.io/dentresa-demo/ ／ LP: https://tsubasagit.github.io/dentresa-demo/lp/

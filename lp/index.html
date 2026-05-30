@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DentResa（デントレザ）｜歯科専用 Web予約・リコール管理システム</title>
+<meta name="description" content="リコール率の最大化と、レセコン・電子カルテへの疎結合連携に特化した歯科医院向けクラウド予約システム。"また来てくれる"を、仕組みにする。" />
+<link rel="canonical" href="https://dentresa.example.com/" />
+
+<!-- OGP -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="DentResa｜"また来てくれる"を、仕組みにする。歯科専用 Web予約・リコール管理" />
+<meta property="og:description" content="リコール最適化エンジンと疎結合な連携アーキテクチャで、歯科医院の予約業務を未来へ。" />
+<meta property="og:image" content="images/hero.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<!-- favicon (歯のシルエット) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23538bb0'/%3E%3Cpath d='M16 7c-3 0-4-1.5-6-1.5C7.5 5.5 6 7.5 6 11c0 4 1.2 7 2.4 10.5C9.2 23.8 9.8 26 11 26c1.4 0 1.6-3 2.4-5 .4-1 1.2-1.6 2.6-1.6s2.2.6 2.6 1.6c.8 2 1 5 2.4 5 1.2 0 1.8-2.2 2.6-4.5C26.8 18 28 15 28 11c0-3.5-1.5-5.5-4-5.5-2 0-3 1.5-6 1.5z' fill='white'/%3E%3C/svg%3E" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --primary:#538bb0;
+    --primary-dark:#3d6f94;
+    --primary-deep:#2f5d7d;
+    --teal:#14b8a6;
+    --teal-soft:#5eead4;
+    --ink:#1e293b;
+    --muted:#64748b;
+    --line:#e2e8f0;
+    --bg:#f7fafc;
+    --radius:18px;
+    --shadow:0 18px 40px -18px rgba(47,93,125,.35);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+    color:var(--ink);background:#fff;line-height:1.75;-webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;font-size:.8rem;font-weight:700;
+    color:var(--primary);letter-spacing:.08em;text-transform:uppercase;
+    background:rgba(83,139,176,.1);padding:6px 14px;border-radius:999px;
+  }
+  .sec-title{font-size:clamp(1.7rem,4vw,2.5rem);font-weight:900;line-height:1.3;letter-spacing:-.01em}
+  .sec-lead{color:var(--muted);margin-top:14px;font-size:1.02rem}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    font-weight:700;border-radius:12px;padding:15px 30px;font-size:1rem;
+    transition:transform .2s ease,box-shadow .2s ease,background .2s ease;cursor:pointer;border:none;
+  }
+  .btn-primary{background:var(--primary);color:#fff;box-shadow:0 12px 24px -10px rgba(83,139,176,.7)}
+  .btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px)}
+  .btn-ghost{background:#fff;color:var(--primary);border:2px solid var(--primary)}
+  .btn-ghost:hover{background:var(--primary);color:#fff;transform:translateY(-2px)}
+  .btn-white{background:#fff;color:var(--primary)}
+  .btn-white:hover{transform:translateY(-2px);box-shadow:0 14px 28px -12px rgba(0,0,0,.4)}
+
+  /* ---------- header ---------- */
+  header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.3rem;letter-spacing:-.02em}
+  .logo .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--primary),var(--teal));display:grid;place-items:center;color:#fff;font-size:1.2rem}
+  .logo-mark{width:42px;height:42px;display:block;flex:none}
+  .logo small{display:block;font-size:.62rem;font-weight:500;color:var(--muted);letter-spacing:.04em;margin-top:-2px}
+  .nav-links{display:flex;align-items:center;gap:28px;font-size:.92rem;font-weight:500}
+  .nav-links a{color:var(--muted);transition:color .2s}
+  .nav-links a:hover{color:var(--primary)}
+  .nav-cta{display:flex;align-items:center;gap:12px}
+  .menu-btn{display:none;background:none;border:none;font-size:1.6rem;cursor:pointer;color:var(--ink)}
+  @media(max-width:880px){
+    .nav-links{display:none}
+    .nav-cta .btn-ghost{display:none}
+    .menu-btn{display:block}
+  }
+  .mobile-menu{display:none;flex-direction:column;gap:6px;padding:14px 24px 22px;border-bottom:1px solid var(--line);background:#fff}
+  .mobile-menu.open{display:flex}
+  .mobile-menu a{padding:10px 0;font-weight:500;border-bottom:1px solid #f1f5f9}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;padding:80px 0 110px;background:
+    radial-gradient(1200px 500px at 80% -10%,rgba(20,184,166,.14),transparent 60%),
+    radial-gradient(900px 500px at 0% 10%,rgba(83,139,176,.18),transparent 55%),
+    linear-gradient(180deg,#f3f9fc,#ffffff);}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+  .hero h1{font-size:clamp(2.2rem,5.4vw,3.6rem);font-weight:900;line-height:1.22;letter-spacing:-.02em}
+  .hero h1 .hl{position:relative;color:var(--primary);white-space:nowrap}
+  .hero h1 .hl::after{content:"";position:absolute;left:-2px;right:-2px;bottom:.08em;height:.34em;background:var(--teal-soft);opacity:.55;z-index:-1;border-radius:4px}
+  .hero p.lead{margin-top:22px;font-size:1.12rem;color:#42566b;max-width:30em}
+  .hero-cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+  .hero-note{margin-top:18px;font-size:.84rem;color:var(--muted)}
+
+  .hero-visual{position:relative}
+  .hero-img{width:100%;border-radius:24px;box-shadow:var(--shadow);border:1px solid var(--line)}
+  .hero-card-main{
+    background:#fff;border-radius:24px;box-shadow:var(--shadow);padding:22px;border:1px solid var(--line);
+  }
+  .hcm-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:12px}
+  .hcm-head b{font-size:.95rem}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .gauge{margin:18px 0 8px;text-align:center}
+  .gauge .num{font-size:3.4rem;font-weight:900;color:var(--primary);line-height:1}
+  .gauge .lbl{color:var(--muted);font-size:.85rem;margin-top:6px}
+  .bar{height:9px;border-radius:99px;background:#eef2f6;overflow:hidden;margin-top:14px}
+  .bar > i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--primary),var(--teal))}
+  .mini-rows{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+  .mini-row{display:flex;align-items:center;justify-content:space-between;font-size:.86rem;background:#f8fafc;border-radius:12px;padding:10px 14px}
+  .pill{font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:999px}
+  .pill.line{background:#dcfce7;color:#15803d}.pill.sms{background:#e0f2fe;color:#0369a1}
+
+  .float{position:absolute;background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:14px 18px;border:1px solid var(--line);animation:floaty 5s ease-in-out infinite}
+  .float .k{font-size:1.5rem;font-weight:900;color:var(--teal)}
+  .float .t{font-size:.74rem;color:var(--muted)}
+  .float.a{top:-26px;left:-30px;animation-delay:.2s}
+  .float.b{bottom:-26px;right:-22px;animation-delay:1.2s}
+  .float.b .k{color:var(--primary)}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+  .marquee-strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#fbfdfe;padding:18px 0}
+  .marquee-strip .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:14px 30px;justify-content:center;color:var(--muted);font-size:.86rem;font-weight:500}
+  .marquee-strip b{color:var(--ink)}
+
+  @media(max-width:880px){
+    .hero-grid{grid-template-columns:1fr;gap:64px}
+    .hero{padding:54px 0 90px}
+    .float.a{left:0}.float.b{right:0}
+  }
+
+  /* ---------- generic section ---------- */
+  section.block{padding:90px 0}
+  .center{text-align:center;max-width:720px;margin:0 auto}
+
+  /* problems */
+  .prob-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:46px}
+  .prob{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:28px;position:relative;overflow:hidden}
+  .prob::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,#f87171,#fb923c)}
+  .prob .ic{font-size:1.8rem}
+  .prob h3{margin:14px 0 8px;font-size:1.12rem}
+  .prob p{color:var(--muted);font-size:.94rem}
+
+  /* differentiators */
+  .diff{background:linear-gradient(180deg,#f3f9fc,#fff)}
+  .diff-row{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:50px}
+  .diff-card{background:#fff;border-radius:24px;border:1px solid var(--line);box-shadow:var(--shadow);padding:36px;position:relative;overflow:hidden}
+  .diff-card .badge{position:absolute;top:26px;right:26px;font-size:3.6rem;font-weight:900;color:#eef4f8;line-height:1}
+  .diff-card .ic{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-size:1.6rem;color:#fff}
+  .diff-card.one .ic{background:linear-gradient(135deg,var(--teal),#0d9488)}
+  .diff-card.two .ic{background:linear-gradient(135deg,var(--primary),var(--primary-deep))}
+  .diff-card h3{margin:18px 0 10px;font-size:1.4rem;position:relative}
+  .diff-card p{color:var(--muted)}
+  .diff-card ul{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:10px}
+  .diff-card li{display:flex;gap:10px;font-size:.94rem;align-items:flex-start}
+  .diff-card li::before{content:"✓";color:var(--teal);font-weight:900;flex:none}
+
+  /* features */
+  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:50px}
+  .feat{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px;transition:transform .25s,box-shadow .25s}
+  .feat:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+  .feat .ic{width:48px;height:48px;border-radius:13px;background:rgba(83,139,176,.12);display:grid;place-items:center;font-size:1.35rem}
+  .feat h3{margin:16px 0 8px;font-size:1.08rem}
+  .feat p{color:var(--muted);font-size:.92rem}
+  .feat .tag{display:inline-block;margin-top:14px;font-size:.7rem;font-weight:700;color:var(--primary);background:rgba(83,139,176,.1);padding:3px 9px;border-radius:6px;letter-spacing:.04em}
+  /* image showcases */
+  .showcase{margin:44px auto 0;max-width:780px}
+  .showcase img{width:100%;border-radius:20px;box-shadow:var(--shadow);border:1px solid var(--line)}
+  .card-img{width:100%;height:180px;object-fit:cover;border-radius:14px;margin-bottom:22px;background:#fff}
+  .banner{margin:36px auto 0;max-width:880px}
+  .banner img{width:100%;border-radius:22px;box-shadow:var(--shadow)}
+
+  /* recall flow */
+  .flow{background:var(--primary-deep);color:#fff;position:relative;overflow:hidden}
+  .flow::after{content:"";position:absolute;inset:0;background:radial-gradient(700px 300px at 90% 0,rgba(20,184,166,.35),transparent 60%);pointer-events:none}
+  .flow .eyebrow{background:rgba(255,255,255,.14);color:#cdeaf0}
+  .flow .sec-title,.flow .sec-lead{color:#fff}
+  .flow .sec-lead{color:#c7dbe8}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:50px;position:relative;z-index:1}
+  .step{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:24px}
+  .step .n{width:38px;height:38px;border-radius:11px;background:var(--teal);color:#053b35;font-weight:900;display:grid;place-items:center;font-size:1.05rem}
+  .step h3{margin:14px 0 8px;font-size:1.05rem}
+  .step p{color:#c7dbe8;font-size:.88rem}
+
+  /* integration diagram */
+  .arch{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:46px}
+  .arch .layer{width:100%;max-width:680px;text-align:center;border-radius:14px;padding:16px 20px;font-weight:700}
+  .arch .l-cloud{background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff}
+  .arch .l-adapter{background:#ede9fe;color:#6d28d9;border:1px solid #ddd6fe}
+  .arch .l-bridge{background:#fef3c7;color:#b45309;border:1px solid #fde68a}
+  .arch .l-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:680px}
+  .arch .l-end{background:#f1f5f9;color:#475569;border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center;font-weight:700;font-size:.92rem}
+  .arch .down{color:var(--muted);font-size:1.2rem}
+  .arch .down small{display:block;font-size:.72rem;margin-top:-2px}
+  .prio{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px}
+  .prio .p{border:1px solid var(--line);border-radius:14px;padding:20px;background:#fff}
+  .prio .p .rk{font-size:1.4rem;font-weight:900;color:var(--primary)}
+
+  /* stats */
+  .stats{background:linear-gradient(135deg,var(--primary),var(--teal));color:#fff}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
+  .stat .num{font-size:clamp(2.2rem,5vw,3.2rem);font-weight:900;line-height:1}
+  .stat .lbl{margin-top:8px;font-size:.9rem;opacity:.92}
+
+  /* plans */
+  .plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:50px;align-items:stretch}
+  .plan{background:#fff;border:1px solid var(--line);border-radius:20px;padding:30px;display:flex;flex-direction:column}
+  .plan.pop{border:2px solid var(--primary);box-shadow:var(--shadow);position:relative}
+  .plan.pop .ribbon{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;font-size:.72rem;font-weight:700;padding:5px 16px;border-radius:999px}
+  .plan .ph{font-size:.78rem;font-weight:700;color:var(--teal);letter-spacing:.06em}
+  .plan h3{font-size:1.35rem;margin:6px 0 4px}
+  .plan .price{font-size:1rem;color:var(--muted);margin-bottom:18px}
+  .plan .price b{font-size:1.7rem;color:var(--ink)}
+  .plan ul{list-style:none;display:flex;flex-direction:column;gap:11px;font-size:.92rem;flex:1}
+  .plan li{display:flex;gap:9px}
+  .plan li::before{content:"✓";color:var(--primary);font-weight:900}
+  .plan .btn{margin-top:24px;width:100%}
+
+  /* steps to start */
+  .start{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:46px;counter-reset:s}
+  .start .s{position:relative;padding-top:14px}
+  .start .s .n{font-size:.8rem;font-weight:700;color:var(--teal)}
+  .start .s h3{font-size:1.05rem;margin:6px 0 6px}
+  .start .s p{color:var(--muted);font-size:.9rem}
+  .start .s::before{content:"";position:absolute;top:0;left:0;width:42px;height:4px;border-radius:99px;background:linear-gradient(90deg,var(--primary),var(--teal))}
+
+  /* faq */
+  .faq{max-width:780px;margin:46px auto 0}
+  .qa{border:1px solid var(--line);border-radius:14px;margin-bottom:14px;background:#fff;overflow:hidden}
+  .qa button{width:100%;text-align:left;background:none;border:none;padding:20px 24px;font-size:1.02rem;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;gap:16px;align-items:center;color:var(--ink);font-family:inherit}
+  .qa .ans{max-height:0;overflow:hidden;transition:max-height .3s ease;color:var(--muted)}
+  .qa .ans p{padding:0 24px 20px}
+  .qa.open .ans{max-height:320px}
+  .qa .ar{transition:transform .3s;color:var(--primary);font-size:1.3rem}
+  .qa.open .ar{transform:rotate(45deg)}
+
+  /* cta */
+  .cta{background:var(--primary-deep);color:#fff;text-align:center;position:relative;overflow:hidden}
+  .cta::before{content:"";position:absolute;inset:0;background:radial-gradient(600px 300px at 50% -20%,rgba(20,184,166,.4),transparent 60%)}
+  .cta .wrap{position:relative;z-index:1}
+  .cta h2{font-size:clamp(1.8rem,4.5vw,2.7rem);font-weight:900}
+  .cta p{margin-top:16px;color:#cfe2ee;font-size:1.05rem}
+  .cta-btns{display:flex;gap:14px;justify-content:center;margin-top:32px;flex-wrap:wrap}
+
+  /* footer */
+  footer{background:#0f1f2b;color:#9fb4c2;padding:60px 0 30px;font-size:.9rem}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:30px}
+  footer h4{color:#fff;font-size:.95rem;margin-bottom:14px}
+  footer a{display:block;padding:5px 0;color:#9fb4c2;transition:color .2s}
+  footer a:hover{color:#fff}
+  .foot-logo{display:flex;align-items:center;gap:10px;color:#fff;font-weight:900;font-size:1.2rem;margin-bottom:12px}
+  .foot-bottom{border-top:1px solid #1e3445;margin-top:40px;padding-top:22px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:.8rem;color:#6f8597}
+  /* mascot */
+  .mascot{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:46px}
+  .mascot img{height:104px;width:auto;border-radius:16px;background:#fff;padding:4px;box-shadow:0 10px 22px -8px rgba(0,0,0,.45);animation:floaty 4s ease-in-out infinite}
+  .mascot .bubble{position:relative;background:#fff;color:var(--ink);font-size:.82rem;font-weight:700;padding:10px 16px;border-radius:14px;max-width:18em;line-height:1.6}
+  .mascot .bubble::before{content:"";position:absolute;left:-9px;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right-color:#fff}
+  .mascot .bubble small{display:block;font-weight:500;color:var(--muted);font-size:.72rem;margin-top:2px}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  @media(max-width:880px){
+    .prob-grid,.feat-grid,.steps,.stats-grid,.plan-grid,.start,.diff-row,.prio,.arch .l-row,.foot-grid{grid-template-columns:1fr}
+    .stats-grid{grid-template-columns:1fr 1fr}
+    .feat-grid{grid-template-columns:1fr 1fr}
+    section.block{padding:64px 0}
+  }
+  @media(max-width:560px){.feat-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="wrap nav">
+    <a href="#top" class="logo">
+      <img class="logo-mark" src="images/logo.png" alt="DentResa ロゴ" />
+      <span>DentResa<small>歯科専用 Web予約・リコール管理</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#problem">課題</a>
+      <a href="#strength">強み</a>
+      <a href="#features">機能</a>
+      <a href="#integration">連携</a>
+      <a href="#plans">プラン</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#contact" class="btn btn-ghost" style="padding:11px 20px">資料請求</a>
+      <a href="https://tsubasagit.github.io/dentresa-demo/" target="_blank" rel="noopener" class="btn btn-primary" style="padding:11px 22px">デモを見る</a>
+      <button class="menu-btn" id="menuBtn" aria-label="メニュー">☰</button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#problem">課題</a>
+    <a href="#strength">強み</a>
+    <a href="#features">機能</a>
+    <a href="#integration">連携</a>
+    <a href="#plans">プラン</a>
+    <a href="#faq">FAQ</a>
+    <a href="https://tsubasagit.github.io/dentresa-demo/" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:10px">デモを見る</a>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">🦷 歯科専用 予約・リコール SaaS</span>
+      <h1>“また来てくれる”を、<br><span class="hl">仕組みにする。</span></h1>
+      <p class="lead">
+        リコール率の最大化と、レセコン・電子カルテへの疎結合連携に特化した、
+        歯科医院のためのクラウド予約システム。定期検診の“次の一回”を、もう取りこぼさない。
+      </p>
+      <div class="hero-cta">
+        <a href="https://tsubasagit.github.io/dentresa-demo/" target="_blank" rel="noopener" class="btn btn-primary">デモを操作する →</a>
+        <a href="#strength" class="btn btn-ghost">特長を知る</a>
+      </div>
+      <p class="hero-note">※ レセコン連携は対応メーカーを順次拡大。導入相談は無料です。</p>
+      <p class="hero-note" style="margin-top:8px">
+        <a href="https://tsubasagit.github.io/dentresa-demo/reservations/new/" target="_blank" rel="noopener" style="color:var(--primary);font-weight:700;text-decoration:underline">▶ 患者さま向け「Web予約（診察ID）」デモを試す</a>
+      </p>
+    </div>
+
+    <div class="hero-visual">
+      <div class="float a">
+        <div class="k">+18<span style="font-size:1rem">%</span></div>
+        <div class="t">リコール再来率</div>
+      </div>
+      <div class="float b">
+        <div class="k">−40<span style="font-size:1rem">%</span></div>
+        <div class="t">予約電話の手間</div>
+      </div>
+
+      <img class="hero-img" src="images/hero.jpg" alt="タブレットで予約画面を見せる歯科医院の受付スタッフ" />
+    </div>
+  </div>
+</section>
+
+<div class="marquee-strip">
+  <div class="wrap">
+    <span>✓ <b>二軸予約</b>（担当者 × ユニット）</span>
+    <span>✓ <b>マルチチャネル通知</b>（SMS / メール / LINE）</span>
+    <span>✓ <b>レセコン・カルテ連携</b></span>
+    <span>✓ <b>離脱予測</b>スコアリング</span>
+    <span>✓ <b>医療情報ガイドライン</b>準拠を前提に設計</span>
+  </div>
+</div>
+
+<!-- ============ PROBLEM ============ -->
+<section class="block" id="problem">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">こんな課題、ありませんか？</span>
+      <h2 class="sec-title" style="margin-top:14px">予約は埋まっても、<br>“次の来院”が続かない。</h2>
+      <p class="sec-lead">歯科経営の安定は、新患よりも「リコールの定着」で決まります。</p>
+    </div>
+    <div class="prob-grid">
+      <div class="prob reveal">
+        <div class="ic">📉</div>
+        <h3>リコールの取りこぼし</h3>
+        <p>「そろそろ検診です」の声かけが属人化し、定期来院が途絶える。中断患者も放置されがち。</p>
+      </div>
+      <div class="prob reveal">
+        <div class="ic">☎️</div>
+        <h3>予約電話に追われる受付</h3>
+        <p>電話対応・台帳記入・リマインドの手作業で、本来の接遇に手が回らない。</p>
+      </div>
+      <div class="prob reveal">
+        <div class="ic">🔌</div>
+        <h3>レセコンとの二重入力</h3>
+        <p>予約システムとレセコン／カルテが分断され、患者情報を何度も入力している。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DIFFERENTIATORS ============ -->
+<section class="block diff" id="strength">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">DentResa の2つの核</span>
+      <h2 class="sec-title" style="margin-top:14px">飽和した予約市場で、<br>ここだけは譲らない。</h2>
+      <p class="sec-lead">単なる予約台帳ではありません。「再来」と「連携」に振り切ったプロダクトです。</p>
+    </div>
+    <div class="diff-row">
+      <div class="diff-card one reveal">
+        <img class="card-img" src="images/feature-recall.jpg" alt="自動リコールの仕組み：カレンダーとSMS・LINE・メール通知で患者の再来を促すイラスト" />
+        <div class="ic">🔁</div>
+        <h3>リコール最適化エンジン</h3>
+        <p>来院間隔・処置内容・患者属性から、最適な再来タイミングと通知を自動設計。離脱しそうな患者を先回りで掘り起こします。</p>
+        <ul>
+          <li>処置種別に応じた次回推奨来院の自動算出（SRP後3か月／検診6か月 など）</li>
+          <li>年齢・応答率に応じて通知チャネル・文面・タイミングを出し分け</li>
+          <li>来院履歴とキャンセル傾向から離脱リスクをスコアリング</li>
+        </ul>
+      </div>
+      <div class="diff-card two reveal">
+        <img class="card-img" src="images/feature-integration.jpg" alt="疎結合な連携アーキテクチャ：クラウドとアダプタ層で複数のレセコン・カルテをつなぐアイソメトリック図" />
+        <div class="ic">🧩</div>
+        <h3>疎結合な連携アーキテクチャ</h3>
+        <p>特定レセコンに依存しないアダプタ層で、メーカーごとの差異を吸収。オンプレ機にも院内ブリッジで接続します。</p>
+        <ul>
+          <li>①公式API ②CSV／ファイル ③DB参照 の優先順位で柔軟に接続</li>
+          <li>カルテ側の処置完了情報を取り込み、リコール自動設定の起点に</li>
+          <li>カルテ・レセプトは自社開発せず、診療報酬改定の追従負担を回避</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section class="block" id="features">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">主要機能</span>
+      <h2 class="sec-title" style="margin-top:14px">予約からリコールまで、ひと続きに。</h2>
+      <p class="sec-lead">受付・チェアサイド・患者スマホ、それぞれの現場にフィットします。</p>
+    </div>
+    <div class="showcase reveal">
+      <img src="images/dashboard-mockup.jpg" alt="DentResaの予約・リコール管理ダッシュボード画面（PC・タブレット）" />
+    </div>
+    <div class="feat-grid">
+      <div class="feat reveal"><div class="ic">📅</div><h3>二軸予約管理</h3><p>「担当者 × ユニット」の二軸で、処置別の可変所要時間を自動設定。</p><span class="tag">RSV-01 / 02</span></div>
+      <div class="feat reveal"><div class="ic">🌐</div><h3>24時間Web予約</h3><p>空き枠のみ表示。Web開放枠と電話枠を分離して露出を制御。</p><span class="tag">RSV-03 / 04</span></div>
+      <div class="feat reveal"><div class="ic">⏫</div><h3>キャンセル待ち繰り上げ</h3><p>空き枠発生時、待機患者へ自動で繰り上げ案内。</p><span class="tag">RSV-06</span></div>
+      <div class="feat reveal"><div class="ic">🔔</div><h3>多段階リマインド</h3><p>予定前・当日・超過後など複数タイミングで自動通知。</p><span class="tag">RCL-03</span></div>
+      <div class="feat reveal"><div class="ic">📊</div><h3>離脱予測＆効果測定</h3><p>離脱リスクをスコア化し、チャネル別の再来転換率を可視化。</p><span class="tag">RCL-06 / 07</span></div>
+      <div class="feat reveal"><div class="ic">💬</div><h3>マルチチャネル通知</h3><p>SMS・メール・LINE公式アカウントに対応。送信ログも記録。</p><span class="tag">NTF-01〜04</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RECALL FLOW ============ -->
+<section class="block flow">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">リコールエンジンの流れ</span>
+      <h2 class="sec-title" style="margin-top:14px">“声かけ任せ”を、自動の仕組みへ。</h2>
+      <p class="sec-lead">処置の完了をトリガーに、再来までを自動で設計します。</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><div class="n">1</div><h3>処置完了を取り込み</h3><p>カルテ／レセコンの処置情報を連携で受け取る。</p></div>
+      <div class="step reveal"><div class="n">2</div><h3>次回来院を自動設計</h3><p>処置種別に応じた推奨間隔で再来日を算出。</p></div>
+      <div class="step reveal"><div class="n">3</div><h3>最適チャネルで案内</h3><p>患者属性に合わせSMS／メール／LINEを出し分け。</p></div>
+      <div class="step reveal"><div class="n">4</div><h3>再来とKPIを測定</h3><p>転換率・離脱率を可視化し、改善に回す。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INTEGRATION ============ -->
+<section class="block diff" id="integration">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">連携アーキテクチャ</span>
+      <h2 class="sec-title" style="margin-top:14px">どのレセコンでも、つながる設計。</h2>
+      <p class="sec-lead">アダプタ層がメーカー差を吸収。オンプレ機は院内ブリッジで中継します。</p>
+    </div>
+
+    <div class="arch reveal">
+      <div class="layer l-cloud">DentResa（クラウド / SaaS）｜予約・リコール・通知</div>
+      <div class="down">↓<small>標準連携I/F (API)</small></div>
+      <div class="layer l-adapter">連携アダプタ層（Adapter / Plugin）— メーカー差を吸収</div>
+      <div class="down">↓</div>
+      <div class="layer l-bridge">同期ブリッジ（院内 Windows 常駐クライアント）— オンプレ時</div>
+      <div class="down">↓</div>
+      <div class="l-row">
+        <div class="l-end">レセコン</div>
+        <div class="l-end">電子カルテ</div>
+        <div class="l-end">資格確認端末</div>
+      </div>
+    </div>
+
+    <div class="prio">
+      <div class="p reveal"><div class="rk">①</div><strong>公式API</strong><p style="color:var(--muted);font-size:.9rem;margin-top:6px">双方向・リアルタイム。最も堅牢な接続。</p></div>
+      <div class="p reveal"><div class="rk">②</div><strong>CSV／ファイル連携</strong><p style="color:var(--muted);font-size:.9rem;margin-top:6px">定期的な差分ファイルを取り込み。</p></div>
+      <div class="p reveal"><div class="rk">③</div><strong>DB参照（読取）</strong><p style="color:var(--muted);font-size:.9rem;margin-top:6px">API非公開メーカー向け。読取専用で接続。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="block stats">
+  <div class="wrap stats-grid">
+    <div class="stat reveal"><div class="num">48%</div><div class="lbl">リコール再来 転換率</div></div>
+    <div class="stat reveal"><div class="num">24h</div><div class="lbl">Web予約 受付</div></div>
+    <div class="stat reveal"><div class="num">3ch</div><div class="lbl">通知チャネル対応</div></div>
+    <div class="stat reveal"><div class="num">99.9%</div><div class="lbl">目標稼働率</div></div>
+  </div>
+</section>
+
+<!-- ============ PLANS ============ -->
+<section class="block" id="plans">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">導入プラン</span>
+      <h2 class="sec-title" style="margin-top:14px">医院の段階に合わせて、無理なく。</h2>
+      <p class="sec-lead">予約管理から始め、リコール最適化・複数メーカー連携へと拡張できます。</p>
+    </div>
+    <div class="plan-grid">
+      <div class="plan reveal">
+        <div class="ph">PHASE 1</div>
+        <h3>スターター</h3>
+        <div class="price"><b>要問合せ</b> / 月</div>
+        <ul>
+          <li>二軸予約管理・Web予約</li>
+          <li>基本リコール（自動設定〜中断検出）</li>
+          <li>SMS／メール／LINE通知</li>
+          <li>レセコン1社連携</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost">相談する</a>
+      </div>
+      <div class="plan pop reveal">
+        <span class="ribbon">人気</span>
+        <div class="ph">PHASE 2</div>
+        <h3>スタンダード</h3>
+        <div class="price"><b>要問合せ</b> / 月</div>
+        <ul>
+          <li>スターターの全機能</li>
+          <li>リコール最適化・離脱予測</li>
+          <li>分析ダッシュボード</li>
+          <li>LINE連携強化</li>
+        </ul>
+        <a href="#contact" class="btn btn-primary">このプランで相談</a>
+      </div>
+      <div class="plan reveal">
+        <div class="ph">PHASE 3</div>
+        <h3>プロ</h3>
+        <div class="price"><b>要問合せ</b> / 月</div>
+        <ul>
+          <li>スタンダードの全機能</li>
+          <li>複数レセコン／カルテ連携</li>
+          <li>マルチ医院・分院横断管理</li>
+          <li>オンライン資格確認連携</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost">相談する</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ START STEPS ============ -->
+<section class="block diff">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">導入の流れ</span>
+      <h2 class="sec-title" style="margin-top:14px">最短で、現場が変わる。</h2>
+    </div>
+    <div class="banner reveal">
+      <img src="images/scene-clinic.jpg" alt="タブレットを見ながら打ち合わせる歯科医師と歯科衛生士" />
+    </div>
+    <div class="start">
+      <div class="s reveal"><div class="n">STEP 01</div><h3>無料相談・デモ</h3><p>現状の予約・リコール運用とレセコン環境をヒアリング。</p></div>
+      <div class="s reveal"><div class="n">STEP 02</div><h3>連携方式の選定</h3><p>API／CSV／DB参照から最適な接続を設計。</p></div>
+      <div class="s reveal"><div class="n">STEP 03</div><h3>初期設定・移行</h3><p>患者マスタ同期・メニュー・リコールルールを設定。</p></div>
+      <div class="s reveal"><div class="n">STEP 04</div><h3>運用開始・伴走</h3><p>受付トレーニングとKPI改善をCSが支援。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="block" id="faq">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">よくあるご質問</span>
+      <h2 class="sec-title" style="margin-top:14px">FAQ</h2>
+    </div>
+    <div class="faq">
+      <div class="qa reveal"><button>どのレセコン・カルテに対応していますか？ <span class="ar">＋</span></button><div class="ans"><p>アダプタ層で順次拡大しています。公式APIが理想ですが、CSVファイル連携やDB読取参照にも対応するため、API非公開メーカーでも接続を検討できます。まずは現在お使いの製品名をお知らせください。</p></div></div>
+      <div class="qa reveal"><button>オンプレのレセコンでも使えますか？ <span class="ar">＋</span></button><div class="ans"><p>はい。院内に同期用のWindows常駐クライアント（同期ブリッジ）を設置し、クラウドとの中継を行います。出張設定にも対応します。</p></div></div>
+      <div class="qa reveal"><button>カルテやレセプト機能はありますか？ <span class="ar">＋</span></button><div class="ans"><p>DentResaは予約・リコールに特化しており、カルテ・レセプト請求機能は持ちません。診療記録や保険請求は既存のレセコン／電子カルテに委ね、連携に徹することで、診療報酬改定への追従負担をなくしています。</p></div></div>
+      <div class="qa reveal"><button>セキュリティは大丈夫ですか？ <span class="ar">＋</span></button><div class="ans"><p>通信のTLS暗号化・保存データの暗号化に加え、厚労省「医療情報システムの安全管理に関するガイドライン」および3省2ガイドラインへの準拠を前提に設計しています。操作・アクセス監査ログも保持します。</p></div></div>
+      <div class="qa reveal"><button>料金はいくらですか？ <span class="ar">＋</span></button><div class="ans"><p>医院規模・連携内容・対象レセコンによって異なるため、個別にお見積りします。無料相談で最適なプランをご提案します。</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="block cta" id="contact">
+  <div class="wrap">
+    <h2>“また来てくれる”医院へ。</h2>
+    <p>まずは無料デモで、リコールエンジンと連携の実際をご覧ください。</p>
+    <div class="cta-btns">
+      <a href="https://tsubasagit.github.io/dentresa-demo/" target="_blank" rel="noopener" class="btn btn-white">デモを操作する →</a>
+      <a href="mailto:contact@dentresa.example.com" class="btn btn-ghost" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.6)">資料をダウンロード</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-logo"><img src="images/logo.png" alt="DentResa ロゴ" style="width:36px;height:36px" /> DentResa</div>
+        <p style="max-width:24em">歯科医院のためのクラウド予約・リコール管理システム。“また来てくれる”を、仕組みにする。</p>
+      </div>
+      <div>
+        <h4>プロダクト</h4>
+        <a href="#features">機能</a>
+        <a href="#strength">強み</a>
+        <a href="#integration">連携</a>
+        <a href="#plans">プラン</a>
+      </div>
+      <div>
+        <h4>サポート</h4>
+        <a href="#faq">よくある質問</a>
+        <a href="https://tsubasagit.github.io/dentresa-demo/" target="_blank" rel="noopener">デモを操作する</a>
+        <a href="https://tsubasagit.github.io/dentresa-demo/reservations/new/" target="_blank" rel="noopener">患者向けWeb予約（診察ID）</a>
+        <a href="#contact">資料請求</a>
+      </div>
+      <div>
+        <h4>会社情報</h4>
+        <a href="#">運営会社</a>
+        <a href="#">プライバシーポリシー</a>
+        <a href="#">利用規約</a>
+      </div>
+    </div>
+    <div class="mascot">
+      <img src="images/rabbit-kun.png" alt="プロトタイプ開発マスコット ラピットくん" />
+      <span class="bubble">
+        歯みがき大好き、ラピットくんです！
+        <small>― プロトタイプ開発マスコット ラピットくん</small>
+      </span>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 DentResa. All rights reserved.</span>
+      <span>本ページはプロトタイプのデモLPです。数値・画像はイメージです。</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // モバイルメニュー
+  const mb = document.getElementById('menuBtn');
+  const mm = document.getElementById('mobileMenu');
+  mb && mb.addEventListener('click', () => mm.classList.toggle('open'));
+  mm && mm.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mm.classList.remove('open')));
+
+  // FAQ アコーディオン
+  document.querySelectorAll('.qa button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const qa = btn.parentElement;
+      const open = qa.classList.contains('open');
+      document.querySelectorAll('.qa').forEach(x => x.classList.remove('open'));
+      if (!open) qa.classList.add('open');
+    });
+  });
+
+  // スクロールリビール
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
